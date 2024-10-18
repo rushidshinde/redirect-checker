@@ -7,6 +7,19 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      'lg': '1135px',
+      'xl': '1280px',
+      '2xl': '1536px',
+      '3xl': '1920px',
+      'md': {'max': '1135px'},
+      'ml': {'max': '767px'},
+      'mp': {'max': '639px'},
+      'xs': {'max': '474px'},
+    },
+    container: {
+      center: true,
+    },
     extend: {
       colors: {
         background: "var(--background)",
