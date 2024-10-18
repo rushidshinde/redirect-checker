@@ -5,8 +5,8 @@ export default function UploadInstructions() {
 
     const downloadTemplate = () => {
         const link = document.createElement('a');
-        link.href = '/template.csv';
-        link.setAttribute('download', 'template.csv');
+        link.href = '/file/redirection-checker-template-csv-file.csv';
+        link.setAttribute('download', 'redirection-template.csv');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
