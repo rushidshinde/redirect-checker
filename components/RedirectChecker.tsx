@@ -131,7 +131,7 @@ export default function RedirectChecker() {
                 {isLoading && <ProgressBar progress={progress} />}
             </div>
             {isLoading && <p className="mt-2 text-gray-600">Loading, please wait...</p>} {/* Loading message */}
-            <ResultDisplay results={results} />
+            {results.length !== 0 && <ResultDisplay results={results} />}
         </div>
     )
 }
