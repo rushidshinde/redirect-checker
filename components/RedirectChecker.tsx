@@ -4,6 +4,7 @@ import checkRedirect from "@/lib/checkRedirect";
 import UploadInstructions from "@/components/UploadInstructions";
 import FileUpload from "@/components/FileUpload";
 import ResultDisplay from "@/components/ResultDisplay";
+import ProgressBar from "@/components/ProgressBar";
 
 interface RedirectResult {
     sourceUrl: string
@@ -16,7 +17,8 @@ export default function RedirectChecker() {
     const [results, setResults] = useState<RedirectResult[]>([])
     const [baseUrl, setBaseUrl] = useState('')
     const [urlsToCheck, setUrlsToCheck] = useState<{ sourceUrl: string, targetUrl: string }[]>([])
-    const [isLoading, setIsLoading] = useState(false); // New loading state
+    const [isLoading, setIsLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     function handleFileUpload(file: File) {
         const reader = new FileReader()
@@ -44,7 +46,19 @@ export default function RedirectChecker() {
         setIsLoading(true); // Set loading state to true
         const newResults: RedirectResult[] = []
 
-        for (const { sourceUrl, targetUrl } of urlsToCheck) {
+        // for (const { sourceUrl, targetUrl } of urlsToCheck) {
+        //     const redirectedUrl = await checkRedirect(sourceUrl);
+        //     const absoluteRedirectedUrl = new URL(redirectedUrl, baseUrl).toString(); // Convert to absolute URL
+        //     newResults.push({
+        //         sourceUrl,
+        //         targetUrl,
+        //         redirectedUrl: absoluteRedirectedUrl,
+        //         success: absoluteRedirectedUrl === targetUrl // Check if the redirected URL matches the target URL
+        //     })
+        // }
+
+        for (let i = 0; i < urlsToCheck.length; i++) {
+            const { sourceUrl, targetUrl } = urlsToCheck[i];
             const redirectedUrl = await checkRedirect(sourceUrl);
             const absoluteRedirectedUrl = new URL(redirectedUrl, baseUrl).toString(); // Convert to absolute URL
             newResults.push({
@@ -52,7 +66,11 @@ export default function RedirectChecker() {
                 targetUrl,
                 redirectedUrl: absoluteRedirectedUrl,
                 success: absoluteRedirectedUrl === targetUrl // Check if the redirected URL matches the target URL
-            })
+            });
+
+            // Update progress
+            const newProgress = Math.round(((i + 1) / urlsToCheck.length) * 100);
+            setProgress(newProgress);
         }
 
         setResults(newResults)
@@ -75,17 +93,20 @@ export default function RedirectChecker() {
         <div>
             <UploadInstructions />
             <div className="mb-4">
-                <label htmlFor="base-url" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Base URL:</label>
+                <label htmlFor="base-url"
+                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Base
+                    URL:</label>
                 <input
                     type="url"
                     id="base-url"
                     value={baseUrl}
                     onChange={(e) => setBaseUrl(e.target.value)}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="Enter base URL"
+                    placeholder="https://redirect-checker.vercel.app"
                 />
+                <p className="text-sm italic">Please add base url without the / at the end</p>
             </div>
-            <FileUpload onFileUpload={handleFileUpload} />
+            <FileUpload onFileUpload={handleFileUpload}/>
             <div className="flex gap-4 justify-start items-center mp:flex-col ">
                 <button
                     onClick={checkUrls}
@@ -105,6 +126,9 @@ export default function RedirectChecker() {
                         Download Results
                     </button>
                 )}
+            </div>
+            <div className="">
+                {isLoading && <ProgressBar progress={progress} />}
             </div>
             {isLoading && <p className="mt-2 text-gray-600">Loading, please wait...</p>} {/* Loading message */}
             <ResultDisplay results={results} />
