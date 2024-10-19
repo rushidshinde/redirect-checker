@@ -21,10 +21,12 @@ export default function UploadInstructions() {
                     <li>Each row should contain two URLs separated by a comma</li>
                     <li>The first column is the source URL (URL to check)</li>
                     <li>The second column is the target URL (expected final URL)</li>
+                    <li>Use relative paths starting with a forward slash (/)</li>
+                    <li>Do not include the domain name in the URLs</li>
                     <li>Do not include a header row</li>
                 </ul>
                 <div className="">
-                    <p className="font-medium">Example CSV content:</p>
+                <p className="font-medium">Example CSV content:</p>
                     <code className="text-sm text-yellow-300">
                         <p>
                             /source-url,/target-url<br/>

@@ -11,11 +11,18 @@ export async function GET(request: Request) {
 
     try {
         const response = await axios.head(url, {
-            maxRedirects: 0,
+            maxRedirects: 5, // Allow up to 5 redirects
             validateStatus: () => true
         })
 
-        return NextResponse.json({ redirectedUrl: response.headers.location || '' })
+        const redirectedUrl = response.request.res.responseUrl || url
+        const statusCode = response.status
+
+        return NextResponse.json({
+            redirectedUrl,
+            statusCode,
+            originalUrl: url
+        })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'An error occurred while checking the redirect' }, { status: 500 })
