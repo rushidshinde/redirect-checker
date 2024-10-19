@@ -13,3 +13,10 @@ export interface RedirectResult {
     message: string;
     needsUpdate: boolean;
 }
+
+export interface StatsDisplayObj {
+    total: number;
+    success: number;
+    failure: number;
+    warning: number;
+}
