@@ -1,14 +1,15 @@
 import React, { ChangeEvent } from 'react'
 
 interface FileUploadProps {
-    onFileUpload: (file: File) => void
+    onFileSelect: (file: File) => void
+    ref: React.RefObject<HTMLInputElement>
 }
 
-export default function FileUpload({ onFileUpload }: FileUploadProps) {
+export default function FileUpload({ onFileSelect }: FileUploadProps) {
     function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0]
         if (file) {
-            onFileUpload(file)
+            onFileSelect(file)
         }
     }
 
