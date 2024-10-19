@@ -5,13 +5,8 @@ import UploadInstructions from "@/components/UploadInstructions";
 import FileUpload from "@/components/FileUpload";
 import ResultDisplay from "@/components/ResultDisplay";
 import ProgressBar from "@/components/ProgressBar";
+import {RedirectResult, RedirectStatus} from "@/lib/types";
 
-interface RedirectResult {
-    sourceUrl: string
-    targetUrl: string
-    redirectedUrl: string
-    success: boolean
-}
 
 export default function RedirectChecker() {
     const [results, setResults] = useState<RedirectResult[]>([])
@@ -43,44 +38,73 @@ export default function RedirectChecker() {
     }
 
     async function checkUrls() {
-        setIsLoading(true); // Set loading state to true
-        const newResults: RedirectResult[] = []
-
-        // for (const { sourceUrl, targetUrl } of urlsToCheck) {
-        //     const redirectedUrl = await checkRedirect(sourceUrl);
-        //     const absoluteRedirectedUrl = new URL(redirectedUrl, baseUrl).toString(); // Convert to absolute URL
-        //     newResults.push({
-        //         sourceUrl,
-        //         targetUrl,
-        //         redirectedUrl: absoluteRedirectedUrl,
-        //         success: absoluteRedirectedUrl === targetUrl // Check if the redirected URL matches the target URL
-        //     })
-        // }
+        setIsLoading(true);
+        const newResults: RedirectResult[] = [];
 
         for (let i = 0; i < urlsToCheck.length; i++) {
             const { sourceUrl, targetUrl } = urlsToCheck[i];
-            const redirectedUrl = await checkRedirect(sourceUrl);
-            const absoluteRedirectedUrl = new URL(redirectedUrl, baseUrl).toString(); // Convert to absolute URL
+            const result = await checkRedirect(sourceUrl);
+            const absoluteRedirectedUrl = new URL(result.redirectedUrl, baseUrl).toString();
+
+            let status: RedirectStatus;
+            let message: string;
+            let needsUpdate = false;
+
+            if (absoluteRedirectedUrl === targetUrl) {
+                if (result.statusCode === 200) {
+                    status = RedirectStatus.SUCCESS;
+                    message = 'Redirected successfully';
+                } else if (result.statusCode === 404) {
+                    status = RedirectStatus.WARNING;
+                    message = 'Redirected successfully but target page not found';
+                    needsUpdate = true;
+                } else {
+                    status = RedirectStatus.WARNING;
+                    message = `Redirected successfully but received status code ${result.statusCode}`;
+                }
+            } else if (sourceUrl === absoluteRedirectedUrl) {
+                if (result.statusCode === 200) {
+                    status = RedirectStatus.SUCCESS;
+                    message = 'Page not redirected but source exists';
+                } else if (result.statusCode === 404) {
+                    status = RedirectStatus.FAILURE;
+                    message = 'Page not redirected and not found';
+                    needsUpdate = true;
+                } else {
+                    status = RedirectStatus.WARNING;
+                    message = `Page not redirected received status code ${result.statusCode}`;
+                }
+            } else {
+                status = RedirectStatus.WARNING;
+                message = 'Redirected to a different URL than expected';
+                if (result.statusCode === 404) {
+                    message += ' and page not found';
+                    needsUpdate = true;
+                }
+            }
+
             newResults.push({
                 sourceUrl,
                 targetUrl,
                 redirectedUrl: absoluteRedirectedUrl,
-                success: absoluteRedirectedUrl === targetUrl // Check if the redirected URL matches the target URL
+                statusCode: result.statusCode,
+                status,
+                message,
+                needsUpdate
             });
 
-            // Update progress
             const newProgress = Math.round(((i + 1) / urlsToCheck.length) * 100);
             setProgress(newProgress);
         }
 
-        setResults(newResults)
-        setIsLoading(false); // Set loading state to false
+        setResults(newResults);
+        setIsLoading(false);
     }
 
     function downloadResults() {
-        const header = "Source URL,Target URL,Redirected URL,Success\n"; // Header row
+        const header = "Source URL,Target URL,Redirected URL,Status Code,Status,Message,Needs Update\n";
         const csvContent = header
-            + results.map(result => `${result.sourceUrl},${result.targetUrl},${result.redirectedUrl},${result.success ? 'Yes' : 'No'}`).join("\n");
+            + results.map(result => `${result.sourceUrl},${result.targetUrl},${result.redirectedUrl},${result.statusCode},${result.status},${result.message},${result.needsUpdate ? 'Yes' : 'No'}`).join("\n");
         const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
@@ -104,7 +128,7 @@ export default function RedirectChecker() {
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     placeholder="https://redirect-checker.vercel.app"
                 />
-                <p className="text-sm italic">Please add base url without the / at the end</p>
+                <p className="text-sm italic">Please add base url without the forward slash (/) at the end</p>
             </div>
             <FileUpload onFileUpload={handleFileUpload}/>
             <div className="flex gap-4 justify-start items-center mp:flex-col ">
