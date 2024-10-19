@@ -123,13 +123,20 @@ export default function RedirectChecker() {
     }
 
     function downloadResults() {
+        const date = new Date();
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
         const header = "Source URL,Target URL,Redirected URL,Status Code,Status,Message,Needs Update\n";
         const csvContent = header
             + results.map(result => `${result.sourceUrl},${result.targetUrl},${result.redirectedUrl},${result.statusCode},${result.status},${result.message},${result.needsUpdate ? 'Yes' : 'No'}`).join("\n");
         const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "redirect_results.csv");
+        link.setAttribute("download", `redirect_results_${day}_${month}_${year}_${hours}_${minutes}_${seconds}.csv`);
         document.body.appendChild(link);
         link.click();
     }
