@@ -1,5 +1,8 @@
 'use client'
 import React from 'react'
+import {Button} from "@/components/ui/button";
+import {DownloadIcon} from "@radix-ui/react-icons";
+
 
 export default function UploadInstructions() {
 
@@ -14,10 +17,10 @@ export default function UploadInstructions() {
 
     return (
         <div className="w-full flex flex-col justify-center items-center">
-            <div className="flex flex-col gap-3 bg-zinc-800 border border-blue-700 shadow-md rounded-2xl p-8 md:p-4">
-                <h2 className="text-lg font-medium text-center">File Upload Instructions</h2>
-                <p className="">Please upload a CSV file (.csv) with the following format:</p>
-                <ul className="text-md list-disc list-inside">
+            <h2 className="text-center text-2xl mb-2">File Upload Instructions</h2>
+            <p className="mb-1">Please upload a CSV file (.csv) with the following format:</p>
+            <div className="text-sm mb-4">
+                <ul className="list-disc mb-2">
                     <li>Each row should contain two URLs separated by a comma</li>
                     <li>The first column is the source URL (URL to check)</li>
                     <li>The second column is the target URL (expected final URL)</li>
@@ -25,24 +28,18 @@ export default function UploadInstructions() {
                     <li>Do not include the domain name in the URLs</li>
                     <li>Do not include a header row</li>
                 </ul>
-                <div className="">
-                <p className="font-medium">Example CSV content:</p>
-                    <code className="text-sm text-yellow-300">
-                        <p>
-                            /source-url,/target-url<br/>
-                            /old-page,/new-page<br/>
-                            /oldsite,/newsite<br/>
-                            /abc,/full-page<br/>
-                        </p>
-                    </code>
-                    <button
-                        onClick={downloadTemplate}
-                        className="mt-4 bg-white text-black px-3 py-1 rounded-lg font-medium"
-                    >
-                        Download Template CSV
-                    </button>
-                </div>
+                <p className="my-1 font-medium">Example CSV content:</p>
+                <code className="text-yellow-700 dark:text-yellow-300">
+                    /source-url,/target-url<br/>
+                    /old-page,/new-page<br/>
+                    /oldsite,/newsite<br/>
+                    /abc,/full-page<br/>
+                </code>
             </div>
+            <Button variant={'default'} onClick={downloadTemplate}>
+                <DownloadIcon/>
+                Download Template CSV
+            </Button>
         </div>
     )
 }
