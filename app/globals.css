@@ -2,10 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-gray-950 text-white;
-}
-
 .container {
   @apply 3xl:px-[311.5px] 2xl:px-[119.5px] xl:px-10 lg:px-4 md:px-5 mp:px-4;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem}
 }

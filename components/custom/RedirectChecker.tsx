@@ -1,12 +1,16 @@
 'use client'
 import React, {useEffect, useRef, useState} from 'react'
 import checkRedirect from "@/lib/checkRedirect";
-import UploadInstructions from "@/components/UploadInstructions";
-import FileUpload from "@/components/FileUpload";
-import ResultDisplay from "@/components/ResultDisplay";
-import ProgressBar from "@/components/ProgressBar";
+import FileUpload from "@/components/custom/FileUpload";
+import ResultDisplay from "@/components/custom/ResultDisplay";
+import ProgressBar from "@/components/custom/ProgressBar";
 import {RedirectResult, RedirectStatus} from "@/lib/types";
-import StatFilter from "@/components/StatFilter";
+import StatFilter from "@/components/custom/StatFilter";
+import {Label} from "@/components/ui/label";
+import {Button} from "@/components/ui/button";
+import {Loader, WandSparkles} from "lucide-react";
+import {DownloadIcon, ResetIcon} from "@radix-ui/react-icons";
+import {Input} from "@/components/ui/input";
 
 
 export default function RedirectChecker() {
@@ -18,6 +22,8 @@ export default function RedirectChecker() {
     const [filteredResults, setFilteredResults] = useState<RedirectResult[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [resultView, setResultView] = useState<'grid' | 'list'>('grid');
+    const [inputDisabled, setInputDisabled] = useState(false);
 
     function handleFileSelection(selectedFile: File) {
         setFile(selectedFile);
@@ -58,6 +64,7 @@ export default function RedirectChecker() {
             return;
         }
         setIsLoading(true);
+        setInputDisabled(true);
         const urlsToCheck = await processFile(file);
         const newResults: RedirectResult[] = [];
         for (let i = 0; i < urlsToCheck.length; i++) {
@@ -158,74 +165,80 @@ export default function RedirectChecker() {
         if (fileInput) {
             fileInput.value = '';
         }
+        setInputDisabled(false);
     }
 
 
     return (
         <div>
-            <UploadInstructions />
             <div className="mb-4">
-                <label htmlFor="base-url"
-                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Base
-                    URL:</label>
-                <input
-                    type="url"
+                <Label htmlFor={'base-url'} className="">Base URL:</Label>
+                <Input
                     id="base-url"
+                    type="url"
                     value={baseUrl}
                     onChange={(e) => setBaseUrl(e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     placeholder="https://redirect-checker.vercel.app"
+                    className={'disabled:cursor-not-allowed'}
+                    disabled={inputDisabled}
                 />
-                <p className="text-sm italic">Please add base url without the forward slash (/) at the end</p>
+                <p className="text-sm italic my-0">Please add base url without the forward slash (/) at the end</p>
             </div>
-            <FileUpload onFileSelect={handleFileSelection} ref={fileInputRef}/>
+            <FileUpload onFileSelect={handleFileSelection} ref={fileInputRef} disabled={inputDisabled}/>
             <div className="flex gap-4 justify-between items-center mp:flex-col ">
                 {results.length === 0 ? (
                     <>
-                        <button
+                        <Button
                             onClick={checkUrls}
-                            className={`mt-4 ${isLoading ? 'bg-gray-400' : 'bg-white text-black'} px-5 py-2 rounded-lg font-medium disabled:cursor-not-allowed cursor-pointer`}
+                            variant={'default'}
+                            className="disabled:cursor-not-allowed cursor-pointer"
                             disabled={file === null || baseUrl === "" || isLoading} // Disable button if loading
                         >
-                            {isLoading ? 'Checking...' : 'Check Redirects'}
-                        </button>
+                            {
+                                isLoading ?
+                                    <>
+                                        <Loader className="transition-all animate-spin"/>
+                                        Checking...
+                                    </>
+                                    :
+                                    <>
+                                        <WandSparkles/>
+                                        Check Redirects
+                                    </>
+                            }
+                        </Button>
                     </>
                 ) : (
                     <>
-                        <button
+                        <Button
+                            variant={'default'}
                             onClick={downloadResults}
-                            className="mt-4 bg-white text-black px-5 py-2 rounded-lg font-medium"
                             disabled={results.length === 0}
                         >
+                            <DownloadIcon/>
                             Download Results
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant={'destructive'}
                             onClick={resetPage}
-                            className="mt-4 bg-rose-700 text-white px-5 py-2 rounded-lg font-medium flex justify-center items-center gap-2"
                             disabled={results.length === 0}
                         >
-                            <svg className="w-4 aspect-square" xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 512 512">
-                                <path fill="currentColor" d="M386.3 160L336 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l128 0c17.7 0 32-14.3 32-32l0-128c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 51.2L414.4 97.6c-87.5-87.5-229.3-87.5-316.8 0s-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3s163.8-62.5 226.3 0L386.3 160z"/>
-                            </svg>
+                            <ResetIcon/>
                             Reset
-                        </button>
+                        </Button>
                     </>
                 )}
             </div>
             <div className="">
                 {isLoading && <ProgressBar progress={progress}/>}
             </div>
-            {isLoading && <p className="mt-2 text-gray-600">Loading, please wait...</p>} {/* Loading message */}
             {results.length !== 0 && (
                 <div className="w-full">
-                    <h2 className=" my-10 text-2xl font-bold mb-5 py-2 px-5 leading-none bg-gradient-to-r from-0% from-transparent via-50% via-white to-100% to-transparent text-black flex justify-center items-center">
-                        <span>Report</span>
-                    </h2>
+                    <hr className="my-8"/>
                     <div className="w-full flex flex-wrap justify-end items-center gap-4">
-                        <StatFilter results={results} activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
                     </div>
-                    <ResultDisplay results={filteredResults} />
+                    <StatFilter results={results} activeFilter={activeFilter} setActiveFilter={setActiveFilter} resultView={resultView} setResultView={setResultView} />
+                    <ResultDisplay results={filteredResults} resultView={resultView}/>
                 </div>
             )}
         </div>
