@@ -1,4 +1,4 @@
-import RedirectChecker from '@/components/RedirectChecker'
+import RedirectChecker from '@/components/custom/RedirectChecker'
 import Header from "@/components/custom/Header";
 import {ScrollArea} from "@/components/ui/scroll-area";
 

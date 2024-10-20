@@ -1,16 +1,16 @@
 'use client'
 import React, {useEffect, useRef, useState} from 'react'
 import checkRedirect from "@/lib/checkRedirect";
-import FileUpload from "@/components/FileUpload";
-import ResultDisplay from "@/components/ResultDisplay";
-import ProgressBar from "@/components/ProgressBar";
+import FileUpload from "@/components/custom/FileUpload";
+import ResultDisplay from "@/components/custom/ResultDisplay";
+import ProgressBar from "@/components/custom/ProgressBar";
 import {RedirectResult, RedirectStatus} from "@/lib/types";
-import StatFilter from "@/components/StatFilter";
+import StatFilter from "@/components/custom/StatFilter";
 import {Label} from "@/components/ui/label";
-import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Loader, WandSparkles} from "lucide-react";
 import {DownloadIcon, ResetIcon} from "@radix-ui/react-icons";
+import {Input} from "@/components/ui/input";
 
 
 export default function RedirectChecker() {
@@ -179,7 +179,7 @@ export default function RedirectChecker() {
                     value={baseUrl}
                     onChange={(e) => setBaseUrl(e.target.value)}
                     placeholder="https://redirect-checker.vercel.app"
-                    className="disabled:cursor-not-allowed"
+                    className={'disabled:cursor-not-allowed'}
                     disabled={inputDisabled}
                 />
                 <p className="text-sm italic my-0">Please add base url without the forward slash (/) at the end</p>

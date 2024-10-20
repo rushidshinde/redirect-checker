@@ -9,7 +9,7 @@ import {
     DialogContent,
     DialogTrigger
 } from "@/components/ui/dialog";
-import UploadInstructions from "@/components/UploadInstructions";
+import UploadInstructions from "@/components/custom/UploadInstructions";
 
 export default function Header() {
     const { setTheme} = useTheme();

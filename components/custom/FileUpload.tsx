@@ -7,7 +7,7 @@ interface FileUploadProps {
     disabled: boolean
 }
 
-export default function FileUpload({ onFileSelect, disabled, ref}: FileUploadProps) {
+export default function FileUpload({ onFileSelect, disabled = false, ref}: FileUploadProps) {
     function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0]
         if (file) {
@@ -21,7 +21,7 @@ export default function FileUpload({ onFileSelect, disabled, ref}: FileUploadPro
                 type="file"
                 accept=".csv"
                 onChange={handleFileChange}
-                className="disabled:cursor-not-allowed"
+                className={'disabled:cursor-not-allowed'}
                 disabled={disabled}
                 ref={ref}
             />
