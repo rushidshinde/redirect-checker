@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -21,7 +21,6 @@ export default function Checker() {
   const [inputDisabled, setInputDisabled] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [resultPath, setResultPath] = useState<Result["title"]>('');
 
   const router = useRouter();
 
@@ -132,14 +131,8 @@ export default function Checker() {
       }))
     };
     const createResult = await CreateResult(transformedResults)
-    setResultPath(createResult.title)
+    router.push(`/result/${createResult.title}`);
   }
-
-  useEffect(() => {
-    if(resultPath !== "") {
-      router.push(`/result/${resultPath}`);
-    }
-  },[resultPath])
 
   return (
     <div>
