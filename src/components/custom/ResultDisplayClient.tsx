@@ -8,11 +8,15 @@ import Link from 'next/link'
 import StatFilter from '@/components/custom/StatFilter'
 import ResultDisplay from '@/components/custom/resultDisplay'
 import FormattedDate from '@/components/custom/dateFormatter'
+import CopyButton from '@/components/custom/copyButton'
+import { usePathname } from 'next/navigation'
 
 export default function ResultDisplayClient({result, date}: {result: Result["redirects"], date: string}) {
+  const path = usePathname();
   const [activeFilter, setActiveFilter] = useState<RedirectStatus | 'all'>('all');
   const [filteredResults, setFilteredResults] = useState<Result["redirects"]>(null);
   const [resultView, setResultView] = useState<'grid' | 'list'>('grid');
+  const [absoluteUrl, setAbsoluteUrl] = useState("");
 
   function downloadResults() {
     const date = new Date();
@@ -41,21 +45,19 @@ export default function ResultDisplayClient({result, date}: {result: Result["red
     }
   }, [activeFilter, result]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const origin = window.location.origin;
+      setAbsoluteUrl(`${origin}${path}`);
+    }
+  }, [path]);
+
   return (
     <div>
       <div className="flex mb-10">
         <p className="text-xl">Report from <time dateTime={date}><FormattedDate isoDate={date}/></time></p>
       </div>
       <div className="flex justify-between items-center">
-        <Button
-          variant={'default'}
-          onClick={downloadResults}
-          className="cursor-pointer"
-          disabled={result?.length === 0}
-        >
-          <DownloadIcon />
-          Download Results
-        </Button>
         <Button
           variant={'destructive'}
           disabled={result?.length === 0}
@@ -66,6 +68,18 @@ export default function ResultDisplayClient({result, date}: {result: Result["red
             Check new file
           </Link>
         </Button>
+        <div className="flex flex-wrap gap-5">
+          <CopyButton content={absoluteUrl}/>
+          <Button
+            variant={'default'}
+            onClick={downloadResults}
+            className="cursor-pointer"
+            disabled={result?.length === 0}
+          >
+            <DownloadIcon />
+            Download Results
+          </Button>
+        </div>
       </div>
       <hr className="my-8" />
       <StatFilter results={result} activeFilter={activeFilter} setActiveFilter={setActiveFilter} resultView={resultView} setResultView={setResultView} />

@@ -143,16 +143,16 @@ export interface User {
  */
 export interface Result {
   id: number;
-  title?: string | null;
+  title: string;
   redirects?:
     | {
-        source_url?: string | null;
-        target_url?: string | null;
-        redirected_url?: string | null;
-        status_code?: number | null;
-        status?: string | null;
-        message?: string | null;
-        needs_update?: boolean | null;
+        source_url: string;
+        target_url: string;
+        redirected_url: string;
+        status_code: number;
+        status: 'SUCCESS' | 'WARNING' | 'FAILURE';
+        message: string;
+        needs_update: boolean;
         id?: string | null;
       }[]
     | null;

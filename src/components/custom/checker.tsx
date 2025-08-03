@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,7 @@ import { nanoid } from 'nanoid'
 import { CreateResult } from '@/lib/results/create'
 import { useRouter } from 'next/navigation'
 import ProgressBar from '@/components/custom/progressBar'
+import { Result } from '@/payload-types'
 
 
 export default function Checker() {
@@ -20,6 +21,7 @@ export default function Checker() {
   const [inputDisabled, setInputDisabled] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [resultPath, setResultPath] = useState<Result["title"]>('');
 
   const router = useRouter();
 
@@ -130,11 +132,14 @@ export default function Checker() {
       }))
     };
     const createResult = await CreateResult(transformedResults)
-    const resultPath = createResult.title
-    router.push(`/result/${resultPath}`)
-    setIsLoading(false);
+    setResultPath(createResult.title)
   }
 
+  useEffect(() => {
+    if(resultPath !== "") {
+      router.push(`/result/${resultPath}`);
+    }
+  },[resultPath])
 
   return (
     <div>
