@@ -9,7 +9,7 @@ export interface RedirectEntry {
   targetUrl: string;
   redirectedUrl: string;
   statusCode: number;
-  status: string;
+  status: 'SUCCESS' | 'WARNING' | 'FAILURE';
   message: string;
   needsUpdate: boolean;
 }

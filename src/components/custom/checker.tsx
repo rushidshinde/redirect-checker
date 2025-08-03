@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Loader, WandSparkles } from 'lucide-react'
 import { toast } from 'sonner'
-import { RedirectEntry, RedirectResult, RedirectStatus } from '@/lib/types'
+import { RedirectEntry, RedirectStatus } from '@/lib/types'
 import checkRedirect from '@/lib/results/checkRedirect'
 import { nanoid } from 'nanoid'
 import { CreateResult } from '@/lib/results/create'
@@ -119,7 +119,7 @@ export default function Checker() {
       const newProgress = Math.round(((i + 1) / urlsToCheck.length) * 100);
       setProgress(newProgress);
     }
-    const transformedResults:RedirectResult = {
+    const transformedResults:Omit<Result, 'id' | 'sizes' | 'createdAt' | 'deletedAt' | 'updatedAt'> = {
       title: nanoid(),
       redirects: newResults.map(item=>({
         source_url:item.sourceUrl,

@@ -2,9 +2,9 @@
 
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { RedirectResult } from '@/lib/types'
+import { Result } from '@/payload-types'
 
-export async function CreateResult(data: RedirectResult) {
+export async function CreateResult(data: Omit<Result, 'id' | 'sizes' | 'createdAt' | 'deletedAt' | 'updatedAt'>) {
   const payload = await getPayload({ config })
 
   try {
