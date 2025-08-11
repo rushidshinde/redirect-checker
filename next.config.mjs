@@ -30,9 +30,31 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin, strict-origin-when-cross-origin'
+          },
+          {
+            key: "X-Robots-Tag",
+            value: "index, follow"
           }
         ],
       },
+      {
+        source: "/admin",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, nosnippet"
+          }
+        ]
+      },
+      {
+        source: "/admin/(.*)",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, nosnippet"
+          }
+        ]
+      }
     ]
   },
   async redirects() {
