@@ -1,6 +1,12 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import NotFoundClient from '@/components/custom/notFoundClient'
+import { Metadata } from 'next'
+
+export const metadata:Metadata = {
+  title: 'Page Not Found - 301 Redirect Checker',
+  description: 'Oops! The page you are looking for does not exist. You will be redirected to the homepage shortly. Check your URL redirects with our 301 Redirect Checker.',
+}
 
 export default function NotFound() {
   return (

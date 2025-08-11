@@ -29,12 +29,13 @@ type Args = {
 
 export default async function ResultPage({ params: paramsPromise }: Args) {
   const { title = '' } = await paramsPromise
-  const result = await queryResultBytitle({ title });
+  const result = await queryResultBytitle({ title })
   if (!result) {
-    notFound();
+    notFound()
   }
   return (
     <section>
+      <h1 className="hidden">301 Redirect Checker – Bulk URL Redirect Testing Tool</h1>
       <div className="container">
         <div className="pt-20">
           <ResultDisplayClient result={result?.redirects} date={result.createdAt} />
@@ -45,7 +46,6 @@ export default async function ResultPage({ params: paramsPromise }: Args) {
 }
 
 const queryResultBytitle = cache(async ({ title }: { title: string }) => {
-
   const payload = await getPayload({ config })
 
   const result = await payload.find({
