@@ -1,0 +1,25 @@
+301 Redirect Checker is a web-based tool for testing and validating URL redirects in bulk.
+It allows users to upload a CSV file containing source and target URLs, check HTTP status codes
+(301, 302, 404, etc.), and verify if redirects are working as expected.
+
+Core capabilities:
+- Bulk redirect checking from CSV files
+- HTTP status code validation
+- Redirect type identification (301, 302, others)
+- Base URL support for relative paths
+- CSV download of test results
+- Persistent results with sharable links
+- Filtering by status (success, warning, failure)
+- Modern UI with dark mode
+
+Target users:
+- SEO professionals
+- Website developers
+- Website migration teams
+- Digital marketing agencies
+
+Keywords:
+301 redirect checker, bulk redirect checker, URL redirect checker, website redirect testing tool, HTTP status code checker, bulk URL tester, redirect validation tool, SEO redirect checker, CSV redirect checker, broken link checker, HTTP redirect tester, 301 redirect tester online, 302 redirect checker, website URL mapping tool, bulk link checker, check multiple redirects from CSV, verify 301 and 302 redirects in bulk, SEO-friendly redirect testing tool, test HTTP redirects for website migration, bulk redirect status code checker online, website migration redirect testing tool
+
+Website:
+[https://redirect-checker.vercel.app]
